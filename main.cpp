@@ -1,107 +1,190 @@
-template <typename myType> class Vecteur {
+#include <iostream>
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <typename T> class Vecteur {
+
+protected:
+
+  unsigned int size;
 
 public:
 
-  Vecteur () {};
+  Vecteur (unsigned int x) : size(x) {};
 
   virtual ~Vecteur () {};
 
-  virtual myType& operator[](unsigned int)=0;
+  virtual T& operator[](unsigned int)=0;
 
 };
 
+////////////////////////////////////////////////////////////////////////////////
 
-template <typename myType> class BinaryTree {
+template <typename T> class Node {
 
 private:
-
-  myType data;
-
-  unsigned int indice;
-
-  BinaryTree<myType>* leftChild;
-
-  BinaryTree<myType>* rightChild;
+  unsigned int key;
+  T data;
+  Node<T>* left;
+  Node<T>* right;
 
 public:
 
-  BinaryTree () : data(0), indice(0), leftChild(nullptr), rightChild(nullptr) {}
+  Node (unsigned int i = 0, T t = false) : key(i), data(t), left(nullptr), right(nullptr) {}
 
-  ~BinaryTree () {}
+  virtual ~Node () {}
 
-  BinaryTree (const BinaryTree&);
+  Node(const Node<T>&) : key(0), data(0), left(nullptr), right(nullptr) {}; //TODO
 
-  BinaryTree& operator=(const BinaryTree<myType>& other){
-    setData(other.getData());
-    setIndice(other.getIndice());
-    if (other.getLeftChild() != nullptr){
-      BinaryTree<myType> *temp = new BinaryTree<myType>();
-      temp = other.getLeftChild();
-      setLeftChild(temp);
-    }
-    if (other.getRightChild() != nullptr){
-      BinaryTree<myType> *temp = new BinaryTree<myType>();
-      temp = other.getRightChild();
-      setRightChild(temp);
+  Node& operator=(const Node<T>& other){ // TODO
+    other.getKey();
+    return *this;
+  }
+
+  bool operator< (const Node<T>& other) {return getKey() < other.getKey();}
+
+  unsigned int getKey() const {return key;}
+
+  void setKey(unsigned int i) {key = i;}
+
+  T getData () const {return data;}
+
+  void setData(T d) {data = d;}
+
+  Node<T>* getLeft () const {return left;}
+
+  void setLeft (Node<T>* n) {left = n;}
+
+  Node<T>* getRight () const {return right;}
+
+  void setRight (Node<T>* n) {right = n;}
+
+};
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <typename T> class BinaryTree {
+
+protected:
+
+  Node<T>* root;
+
+public:
+
+  BinaryTree () : root(nullptr) {}
+  virtual ~BinaryTree () {}
+
+  BinaryTree (const BinaryTree<T>& other) : root(nullptr) {
+    (*this) = other;
+  }
+
+  BinaryTree& operator=(const BinaryTree<T>& other){
+    if (other.getRoot() != nullptr){
+      Node<T>* temp = new Node<T> ();
+      (*temp) = (*other.getRoot());
+      setRoot(*temp);
     }
     return *this;
   }
 
-  myType getData() const {return data;}
-
-  void setData(myType d){data = d;}
-
-  unsigned int getIndice() const {return indice;}
-
-  void setIndice(unsigned int i) {indice = i;}
-
-  BinaryTree<myType>* getLeftChild() const {return leftChild;}
-
-  void setLeftChild(BinaryTree<myType>* c) {leftChild = c;}
-
-  BinaryTree<myType>* getRightChild() const {return rightChild;}
-
-  void setRightChild(BinaryTree<myType>* c) {rightChild = c;}
-
-  myType& get(unsigned int x) {
-    if (x == indice){
-      return data;
-    }
-    else if (x < indice && getLeftChild() != nullptr) {
-      return getLeftChild()->get(x);
-    }
-    else if (x > indice && getRightChild() != nullptr){
-      return getRightChild()->get(x);
-    }
-    else {
-      return data; // To Delete
-    }
+  Node<T>* getRoot () const {
+    return root;
   }
+
+  void setRoot (Node<T> r) {
+    root = &r;
+  }
+
+  //void Insert(){}
+
+  //void Delete(){}
+
+  //Node<T>* Search(unsigned int x);
+
 };
 
+////////////////////////////////////////////////////////////////////////////////
 
-template <typename myType> class VecteurCreux : public Vecteur<myType> {
+template <typename T> class VecteurCreux : public Vecteur<T> , protected BinaryTree<T> {
 
 private:
 
-  unsigned int size;
-
-  BinaryTree <myType> binary_tree;
-
 public:
 
-  VecteurCreux () : size(0), binary_tree() {};
+  VecteurCreux (unsigned int x) : Vecteur<T>(x) {};
 
   virtual ~VecteurCreux () {};
 
-  virtual myType& operator[](unsigned int x) override {if ((0 <= x) && (x < size)){return binary_tree.get(x);}else{throw;}}
+  virtual T& operator[](unsigned int i) override {
+    if ((0 <= i) && (i < this->size)){
+      //T temp = getNode()->getData();
+      T *temp = new T (getNode(i)->getData());
+      return (*temp);
+    }
+    throw;
+  }
 
+  //using BinaryTree<T>::operator=;
+  VecteurCreux<T>& operator=(const VecteurCreux<T>& other){
+    BinaryTree<T>::operator=(other);
+    this->size = other.size;
+    return *this;
+  }
 
+  Node<T>* getNode(unsigned int i) const { //TODO
+
+    if (this->root == nullptr){
+      Node<T>* temp = new Node<T> ();
+      return temp;
+    }
+    else{
+      Node<T>* n = this->root;
+      bool found = false;
+
+      while (!found){
+        if (i == n->getKey())
+        {
+          return n;
+        }
+        else if (i < n->getKey()){
+          if (n->getLeft() != nullptr){
+            n = n->getLeft();
+          }
+          else{
+            Node<T>* temp = new Node<T> (i);
+            n->setLeft(temp);
+            return temp;
+          }
+        }
+        else{
+          if (n->getRight() != nullptr){
+            n = n->getRight();
+          }
+          else{
+            Node<T>* temp = new Node<T> (i);
+            n->setRight(temp);
+            return temp;
+        }
+      }
+
+    }
+  }
+  return new Node<T> ();
+  }
 };
 
+////////////////////////////////////////////////////////////////////////////////
+
 int main(){
-  VecteurCreux <int> a;
+  VecteurCreux <int> a (5);
   BinaryTree <int> b;
+  Node <int> temp (3,0);
+  b.setRoot(temp);
+  //std::cout << b.getRoot()->getKey() << std::endl;
   BinaryTree <int> c;
-  b=c;
+  c = b;
+  //std::cout << c.getRoot()->getKey() << std::endl;
+  Node <int> i (12,1);
+  Node <int> j (2,1);
+
 }
