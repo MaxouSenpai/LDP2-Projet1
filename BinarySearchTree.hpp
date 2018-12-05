@@ -45,7 +45,10 @@ template <typename T> BinarySearchTree<T>::~BinarySearchTree () {delete root;}
 //BinarySearchTree<T>& operator=(const BinarySearchTree<T>&){};
 
 template <typename T> BinarySearchTree<T>& BinarySearchTree<T>::operator= (const BinarySearchTree<T>& other) {
-  if (other.getRoot() != nullptr) {setRoot(new Node<T> (*other.getRoot()));}
+  if (other.getRoot() != nullptr) {
+    setRoot(new Node<T> (*other.getRoot()));
+  }
+
   return *this;
 }
 

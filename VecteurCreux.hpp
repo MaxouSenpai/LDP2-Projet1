@@ -8,33 +8,40 @@ template <typename T> class VecteurCreux : public Vecteur<T> , protected BinaryS
 
 private:
 
-  unsigned int const size;
+  //unsigned int const size;
 
 public:
 
   friend int main(); // TODO Change
 
-  VecteurCreux (unsigned int x) : size(x) {};
+  VecteurCreux (unsigned int x) : Vecteur<T> (x) {}
 
-  VecteurCreux (T arr[], unsigned int x) : size(x) {  };
+  VecteurCreux (T arr[], unsigned int x) : Vecteur<T> (x) {}
 
   virtual ~VecteurCreux () {};
 
   virtual T& operator[](unsigned int i) override {
-    if ((i > -size) || (i < size)){
+
+    if ((i > -this->size) || (i < this->size)){
       return getNode(i)->getData();
     }
     throw std::out_of_range("Vecteur : Index out of range");
   }
+
   using BinarySearchTree<T>::operator=;
   virtual VecteurCreux<T>& operator=(const VecteurCreux<T>& other) { //TODO Maybe Remove
-    if (size == other.getSize()){
+
+    if (this->size == other.getSize()) {
       BinarySearchTree<T>::operator=(other);
-      return *this;}
-    else{throw;}
+      return *this;
+    }
+
+    else {
+      throw;
+    }
   }
 
-  virtual unsigned int getSize() const override {return size;}
+  virtual unsigned int getSize() const override {return this->size;}
 
   virtual T& get(unsigned int) override {return this->getRoot()->getData();} //TODO
 

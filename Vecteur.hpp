@@ -3,10 +3,13 @@
 
 template <typename T> class Vecteur {
 
+protected:
+  unsigned int const size;
+
 public:
 
   Vecteur () = default;
-
+  Vecteur (unsigned int x) : size(x) {}
   Vecteur (const Vecteur&) = default;
 
   //Vecteur (Vecteur&&) = default;
