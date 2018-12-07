@@ -6,89 +6,58 @@
 
 template <typename T> class VecteurCreux : public Vecteur<T> , protected BinarySearchTree<T> {
 
-private:
-
-  //unsigned int const size;
-
 public:
 
   friend int main(); // TODO Change
 
-  VecteurCreux (unsigned int x) : Vecteur<T> (x) {}
+  VecteurCreux (unsigned int);
 
-  VecteurCreux (T arr[], unsigned int x) : Vecteur<T> (x) {}
+  VecteurCreux (T[], unsigned int);
 
-  virtual ~VecteurCreux () {};
+  virtual ~VecteurCreux ();
 
-  virtual T& operator[](unsigned int i) override {
+  virtual T& operator[](unsigned int) override;
 
-    if ((i > -this->size) || (i < this->size)){
-      return getNode(i)->getData();
-    }
-    throw std::out_of_range("Vecteur : Index out of range");
-  }
+  virtual unsigned int getSize() const override;
 
-  using BinarySearchTree<T>::operator=;
-  virtual VecteurCreux<T>& operator=(const VecteurCreux<T>& other) { //TODO Maybe Remove
+  virtual T& get(unsigned int) override; // TODO
 
-    if (this->size == other.getSize()) {
-      BinarySearchTree<T>::operator=(other);
-      return *this;
-    }
-
-    else {
-      throw;
-    }
-  }
-
-  virtual unsigned int getSize() const override {return this->size;}
-
-  virtual T& get(unsigned int) override {return this->getRoot()->getData();} //TODO
-
-  virtual void set(T,unsigned int) override {};
-
-  virtual Node<T>* getNode(unsigned int i) {
-
-    if (this->root == nullptr){
-      Node<T>* temp = new Node<T> (i);
-      this->root = temp;
-      return temp;
-    }
-    else{
-      Node<T>* n = this->root;
-      bool found = false;
-
-      while (!found){
-        if (i == n->getKey())
-        {
-          found = true;
-        }
-        else if (i < n->getKey()){
-          if (n->getLeft() != nullptr){
-            n = n->getLeft();
-          }
-          else{
-            Node<T>* temp = new Node<T> (i);
-            n->setLeft(temp);
-            n = temp;
-          }
-        }
-        else{
-          if (n->getRight() != nullptr){
-            n = n->getRight();
-          }
-          else{
-            Node<T>* temp = new Node<T> (i);
-            n->setRight(temp);
-            n = temp;
-        }
-      }
-    }
-    return n;
-  }
-  return new Node<T> ();
-  }
+  virtual void set(T,unsigned int) override; // TODO
 
 };
+
+template <typename T>
+VecteurCreux<T>::VecteurCreux (unsigned int x) : Vecteur<T> (x), BinarySearchTree<T> () {}
+
+template <typename T>
+VecteurCreux<T>::VecteurCreux (T arr[],unsigned int x) : Vecteur<T> (x), BinarySearchTree<T> () {}
+
+template <typename T>
+VecteurCreux<T>::~VecteurCreux () {}
+
+template <typename T>
+T& VecteurCreux<T>::operator[](unsigned int i) {
+  if ((i > -this->size) || (i < this->size)) {
+    Node<T>* n = this->Search(i);
+    if (n != nullptr) {
+      return n->getData();
+    }
+    else {
+      Node<T>*newN = new Node<T> (i);
+      this->Insert(newN);
+      return newN->getData();
+    }
+  }
+  throw std::out_of_range("Vecteur : Index out of range");
+}
+//template <typename T> VecteurCreux<T>
+template <typename T>
+unsigned int VecteurCreux<T>::getSize() const {return this->size;}
+
+template <typename T>
+T& VecteurCreux<T>::get(unsigned int) {return this->getRoot()->getData();}
+
+template <typename T>
+void VecteurCreux<T>::set(T,unsigned int){}
 
 #endif

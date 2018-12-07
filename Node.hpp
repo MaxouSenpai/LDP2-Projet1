@@ -6,8 +6,7 @@ template <typename T> class Node {
 private:
   unsigned int key;
   T data;
-  Node<T>* left;
-  Node<T>* right;
+  Node<T> *father, *left, *right;
 
 public:
 
@@ -19,7 +18,7 @@ public:
 
   Node<T>& operator= (const Node<T>&);
 
-  //bool operator< (const Node<T>& other) {return getKey() < other.getKey();}
+  bool operator< (const Node<T>&);
 
   unsigned int getKey () const;
 
@@ -41,9 +40,9 @@ public:
 
 };
 
-template <typename T> Node<T>::Node (unsigned int i, T t) : key(i), data(t), left(nullptr), right(nullptr) {}
+template <typename T> Node<T>::Node (unsigned int i, T t) : key(i), data(t), father(nullptr), left(nullptr), right(nullptr) {}
 
-template <typename T> Node<T>::Node (const Node<T>& other) : key(other.getKey()), data(other.getData()), left(nullptr), right(nullptr) {
+template <typename T> Node<T>::Node (const Node<T>& other) : key(other.getKey()), data(other.getData()), father(nullptr), left(nullptr), right(nullptr) {
 
   if (other.getLeft() != nullptr) {
     setLeft(new Node<T> (*other.getLeft()));
@@ -86,7 +85,7 @@ template <typename T> Node<T>& Node<T>::operator= (const Node<T>& other) {
   return *this;
 }
 
-//bool operator< (const Node<T>& other) {return getKey() < other.getKey();}
+template <typename T> bool Node<T>::operator< (const Node<T>& other) {return getKey() < other.getKey();}
 
 template <typename T> unsigned int Node<T>::getKey () const {return key;}
 

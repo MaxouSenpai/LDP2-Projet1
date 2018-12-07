@@ -12,8 +12,6 @@ public:
   Vecteur (unsigned int x) : size(x) {}
   Vecteur (const Vecteur&) = default;
 
-  //Vecteur (Vecteur&&) = default;
-
   virtual ~Vecteur () = default;
 
   virtual T& operator[](unsigned int) = 0;
