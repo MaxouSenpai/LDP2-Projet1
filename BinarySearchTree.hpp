@@ -28,11 +28,19 @@ public:
 
   virtual Node<T>* Search (unsigned int);
 
-  virtual Node<T>* Minimum ();
+  virtual Node<T>* Minimum (Node<T>*);
+
+  virtual Node<T>* Maximum (Node<T>*);
 
   virtual Node<T>* Successor(Node<T>*);
 
   virtual void inOrder (Node<T>*);
+
+  class iterator;
+
+  iterator begin() {return BinarySearchTree::iterator(this,this->Minimum(root));}
+
+  iterator end() {return BinarySearchTree::iterator(this,this->Maximum(root)->getRight());}
 
 };
 
@@ -88,6 +96,7 @@ void BinarySearchTree<T>::Insert (Node<T>* to_add) {
     if (*to_add < *x) {x = x->getLeft();}
     else {x = x->getRight();}
   }
+  to_add->setParent(y);
   if (y == nullptr) {setRoot(to_add);}
   else if (*to_add < *y) {y->setLeft(to_add);}
   else {y->setRight(to_add);}
@@ -105,8 +114,8 @@ void BinarySearchTree<T>::inOrder(Node<T>* n) {
 }
 
 template <typename T>
-Node<T>* BinarySearchTree<T>::Minimum() {
-  if (Node<T>* min = getRoot()) {
+Node<T>* BinarySearchTree<T>::Minimum(Node<T>* n) {
+  if (Node<T>* min = n) {
     while (min->getLeft() != nullptr) {
       min = min->getLeft();
     }
@@ -116,7 +125,62 @@ Node<T>* BinarySearchTree<T>::Minimum() {
 }
 
 template <typename T>
-Node<T>* BinarySearchTree<T>::Successor(Node<T>*) {return getRoot();}
+Node<T>* BinarySearchTree<T>::Maximum (Node<T>* n) {
+  if (Node<T>* max = n) {
+    while (max->getRight() != nullptr) {
+      max = max->getRight();
+    }
+    return max;
+  }
+  else {return nullptr;}
+}
+
+template <typename T>
+Node<T>* BinarySearchTree<T>::Successor (Node<T>* n) {
+  if (n->getRight()){return Minimum(n->getRight());}
+  else {
+    Node<T> *y = n->getParent();
+    while (y!=nullptr) {
+      if (n == y->getRight()){
+      n = y;
+      y = n->getParent();
+      }
+      else {return y;}
+    }
+    return y;
+  }
+}
+
+template <typename T>
+class BinarySearchTree<T>::iterator {
+
+  friend class BinarySearchTree<T>;
+  friend int main();
+  BinarySearchTree<T>* bst;
+
+  Node<T>* current;
+
+  iterator (BinarySearchTree<T>* t, Node<T>* n) : bst(t), current(n) {}
+
+public:
+
+  iterator () : bst(nullptr), current(nullptr) {}
+
+  iterator& operator++() {
+    current = bst->Successor(current);
+    return *this;
+  }
+  friend bool operator != (const iterator& i1, const iterator& i2) {
+    return i1.current != i2.current;
+  }
+};
+/*
+template <typename T>
+BinarySearchTree::iterator BinarySearchTree<T>::begin() {return BinarySearchTree::iterator(this,this->get_min());}
+
+template <typename T>
+BinarySearchTree::iterator BinarySearchTree<T>::end() {return BinarySearchTree::iterator(this,this->Maximum(root)->getRightChild());}
+*/
 
 
 #endif

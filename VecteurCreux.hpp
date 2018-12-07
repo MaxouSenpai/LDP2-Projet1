@@ -3,6 +3,7 @@
 
 #include "Vecteur.hpp"
 #include "BinarySearchTree.hpp"
+#include <iterator>
 
 template <typename T> class VecteurCreux : public Vecteur<T> , protected BinarySearchTree<T> {
 

@@ -6,7 +6,7 @@ template <typename T> class Node {
 private:
   unsigned int key;
   T data;
-  Node<T> *father, *left, *right;
+  Node<T> *parent, *left, *right;
 
 public:
 
@@ -30,9 +30,13 @@ public:
 
   void setData (T);
 
+  Node<T>* getParent() const;
+
+  void setParent(Node<T>*);
+
   Node<T>* getLeft () const;
 
-  void setLeft (Node<T>* );
+  void setLeft (Node<T>*);
 
   Node<T>* getRight () const;
 
@@ -40,9 +44,9 @@ public:
 
 };
 
-template <typename T> Node<T>::Node (unsigned int i, T t) : key(i), data(t), father(nullptr), left(nullptr), right(nullptr) {}
+template <typename T> Node<T>::Node (unsigned int i, T t) : key(i), data(t), parent(nullptr), left(nullptr), right(nullptr) {}
 
-template <typename T> Node<T>::Node (const Node<T>& other) : key(other.getKey()), data(other.getData()), father(nullptr), left(nullptr), right(nullptr) {
+template <typename T> Node<T>::Node (const Node<T>& other) : key(other.getKey()), data(other.getData()), parent(nullptr), left(nullptr), right(nullptr) {
 
   if (other.getLeft() != nullptr) {
     setLeft(new Node<T> (*other.getLeft()));
@@ -97,18 +101,16 @@ template <typename T> T& Node<T>::getData () {return data;}
 
 template <typename T> void Node<T>::setData (T d) {data = d;}
 
+template <typename T> Node<T>* Node<T>::getParent() const {return parent;}
+
+template <typename T> void Node<T>::setParent(Node<T>* n) {parent = n;}
+
 template <typename T> Node<T>* Node<T>::getLeft () const {return left;}
 
-template <typename T> void Node<T>::setLeft (Node<T>* n) {
-  //if (getLeft() != nullptr) {delete getLeft();}
-  left = n;
-}
+template <typename T> void Node<T>::setLeft (Node<T>* n) {left = n;}
 
 template <typename T> Node<T>* Node<T>::getRight () const {return right;}
 
-template <typename T> void Node<T>::setRight (Node<T>* n) {
-  //if (getRight() != nullptr) {delete getRight();}
-  right = n;
-}
+template <typename T> void Node<T>::setRight (Node<T>* n) {right = n;}
 
 #endif
