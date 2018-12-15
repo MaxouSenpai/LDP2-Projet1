@@ -38,9 +38,9 @@ public:
 
   class iterator;
 
-  iterator begin() {return BinarySearchTree::iterator(this,this->Minimum(root));}
+  virtual iterator begin() {return BinarySearchTree::iterator(this,this->Minimum(root));}
 
-  iterator end() {return BinarySearchTree::iterator(this,this->Maximum(root)->getRight());}
+  virtual iterator end() {return BinarySearchTree::iterator(this,this->Maximum(root)->getRight());}
 
 };
 
@@ -48,16 +48,14 @@ template <typename T>
 BinarySearchTree<T>::BinarySearchTree () : root(nullptr) {}
 
 template <typename T>
-BinarySearchTree<T>::BinarySearchTree (const BinarySearchTree<T>& other) : root(nullptr) {
+BinarySearchTree<T>::BinarySearchTree (const BinarySearchTree<T>& other) : root(nullptr) { // TODO
   if (other.getRoot() != nullptr) {
     setRoot(new Node<T> (*other.getRoot()));
   }
 }
 
 template <typename T>
-BinarySearchTree<T>::~BinarySearchTree () {
-  delete root;
-}
+BinarySearchTree<T>::~BinarySearchTree () {delete root;}
 
 template <typename T>
 BinarySearchTree<T>& BinarySearchTree<T>::operator= (const BinarySearchTree<T>& other) {
@@ -68,14 +66,10 @@ BinarySearchTree<T>& BinarySearchTree<T>::operator= (const BinarySearchTree<T>& 
 }
 
 template <typename T>
-Node<T>* BinarySearchTree<T>::getRoot () const {
-  return root;
-}
+Node<T>* BinarySearchTree<T>::getRoot () const {return root;}
 
 template <typename T>
-void BinarySearchTree<T>::setRoot (Node<T>* r) {
-  root = r;
-}
+void BinarySearchTree<T>::setRoot (Node<T>* r) {root = r;}
 
 template <typename T>
 Node<T>* BinarySearchTree<T>::Search(unsigned int key) {
@@ -153,7 +147,6 @@ Node<T>* BinarySearchTree<T>::Successor (Node<T>* n) {
 
 template <typename T>
 class BinarySearchTree<T>::iterator {
-
   friend class BinarySearchTree<T>;
   friend int main();
   BinarySearchTree<T>* bst;
