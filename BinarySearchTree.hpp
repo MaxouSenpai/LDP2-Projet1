@@ -4,76 +4,102 @@
 #include "Node.hpp"
 #include <iostream>
 
-template <typename T> class BinarySearchTree {
+template <typename K,typename V> class BinarySearchTree {
 
 protected:
 
-  Node<T>* root;
+  Node<K,V>* root;
 
 public:
 
   BinarySearchTree ();
 
-  BinarySearchTree (const BinarySearchTree<T>&);
+  BinarySearchTree (const BinarySearchTree<K,V>&);
 
   virtual ~BinarySearchTree ();
 
-  BinarySearchTree<T>& operator= (const BinarySearchTree<T>&);
+  BinarySearchTree<K,V>& operator= (const BinarySearchTree<K,V>&);
 
-  virtual Node<T>* getRoot () const;
+  virtual Node<K,V>* getRoot () const;
 
-  virtual void setRoot (Node<T>*);
+  virtual void setRoot (Node<K,V>*);
 
-  virtual void Insert (Node<T>*);
+  virtual void Insert (Node<K,V>*);
 
-  virtual Node<T>* Search (unsigned int);
+  virtual Node<K,V>* Search (K);
 
-  virtual Node<T>* Minimum (Node<T>*);
+  virtual Node<K,V>* Minimum (Node<K,V>*);
 
-  virtual Node<T>* Maximum (Node<T>*);
+  virtual Node<K,V>* Maximum (Node<K,V>*);
 
-  virtual Node<T>* Successor(Node<T>*);
+  virtual Node<K,V>* Successor(Node<K,V>*);
 
-  virtual void inOrder (Node<T>*);
+  class iterator {
 
-  class iterator;
+    BinarySearchTree<K,V>* bst;
 
-  virtual iterator begin() {return BinarySearchTree::iterator(this,this->Minimum(root));}
+    Node<K,V>* current;
 
-  virtual iterator end() {return BinarySearchTree::iterator(this,this->Maximum(root)->getRight());}
+public:
+
+    iterator (BinarySearchTree<K,V>*, Node<K,V>*);
+
+    iterator ();
+
+    iterator& operator++();
+
+    bool operator != (const BinarySearchTree<K,V>::iterator& other);
+
+    K getKey();
+
+    V getValue();
+
+  };
+
+  virtual iterator begin ();
+
+  virtual iterator end ();
 
 };
 
-template <typename T>
-BinarySearchTree<T>::BinarySearchTree () : root(nullptr) {}
+template <typename K,typename V>
+BinarySearchTree<K,V>::BinarySearchTree () : root(nullptr) {}
 
-template <typename T>
-BinarySearchTree<T>::BinarySearchTree (const BinarySearchTree<T>& other) : root(nullptr) { // TODO
-  if (other.getRoot() != nullptr) {
-    setRoot(new Node<T> (*other.getRoot()));
-  }
+template <typename K,typename V>
+BinarySearchTree<K,V>::BinarySearchTree (const BinarySearchTree<K,V>& other) : root(nullptr)
+{
+  if (other.root != nullptr)
+    this->root = new Node<K,V> (*other.root);
 }
 
-template <typename T>
-BinarySearchTree<T>::~BinarySearchTree () {delete root;}
+template <typename K,typename V>
+BinarySearchTree<K,V>::~BinarySearchTree () {delete this->root;}
 
-template <typename T>
-BinarySearchTree<T>& BinarySearchTree<T>::operator= (const BinarySearchTree<T>& other) {
-  if (other.getRoot() != nullptr) {
-    setRoot(new Node<T> (*other.getRoot()));
-  }
+template <typename K,typename V>
+BinarySearchTree<K,V>& BinarySearchTree<K,V>::operator= (const BinarySearchTree<K,V>& other)
+{
+  if (this->root != nullptr)
+    delete this->root;
+
+  if (other.root != nullptr)
+    this->root = new Node<K,V> (*other.root);
+
+  else
+    this->root = nullptr;
+
   return *this;
 }
 
-template <typename T>
-Node<T>* BinarySearchTree<T>::getRoot () const {return root;}
+template <typename K,typename V>
+Node<K,V>* BinarySearchTree<K,V>::getRoot () const {return this->root;}
 
-template <typename T>
-void BinarySearchTree<T>::setRoot (Node<T>* r) {root = r;}
+template <typename K,typename V>
+void BinarySearchTree<K,V>::setRoot (Node<K,V>* r) {this->root = r;}
 
-template <typename T>
-Node<T>* BinarySearchTree<T>::Search(unsigned int key) {
-  Node<T> *current = getRoot();
+template <typename K,typename V>
+Node<K,V>* BinarySearchTree<K,V>::Search (K key)
+{
+  Node<K,V> *current = this->root;
   while (current != nullptr) {
     if (key == current->getKey()) {return current;}
     else if (key < current->getKey()){current = current->getLeft();}
@@ -82,98 +108,108 @@ Node<T>* BinarySearchTree<T>::Search(unsigned int key) {
   return current;
 }
 
-template <typename T>
-void BinarySearchTree<T>::Insert (Node<T>* to_add) {
-  Node<T> *y = nullptr, *x = getRoot();
-  while (x != nullptr) {
+template <typename K,typename V>
+void BinarySearchTree<K,V>::Insert (Node<K,V>* to_add)
+{
+  Node<K,V> *y = nullptr, *x = this->root;
+  while (x != nullptr)
+  {
     y = x;
-    if (*to_add < *x) {x = x->getLeft();}
-    else {x = x->getRight();}
+
+    if (*to_add < *x)
+      x = x->getLeft();
+
+    else
+      x = x->getRight();
   }
+
   to_add->setParent(y);
-  if (y == nullptr) {setRoot(to_add);}
-  else if (*to_add < *y) {y->setLeft(to_add);}
-  else {y->setRight(to_add);}
+
+  if (y == nullptr)
+    this->root = to_add;
+
+  else if (*to_add < *y)
+    y->setLeft(to_add);
+
+  else
+    y->setRight(to_add);
 }
 
-template <typename T>
-void BinarySearchTree<T>::inOrder(Node<T>* n) {
-  if (n!=nullptr){
-    std::cout << "(" ;
-    inOrder(n->getLeft());
-    std::cout << n->getData();
-    inOrder(n->getRight());
-    std::cout << ")";
-  }
-}
-
-template <typename T>
-Node<T>* BinarySearchTree<T>::Minimum(Node<T>* n) {
-  if (Node<T>* min = n) {
-    while (min->getLeft() != nullptr) {
+template <typename K,typename V>
+Node<K,V>* BinarySearchTree<K,V>::Minimum (Node<K,V>* n)
+{
+  if (Node<K,V>* min = n)
+  {
+    while (min->getLeft() != nullptr)
       min = min->getLeft();
-    }
+
     return min;
   }
-  else {return nullptr;}
+  else
+    return nullptr;
 }
 
-template <typename T>
-Node<T>* BinarySearchTree<T>::Maximum (Node<T>* n) {
-  if (Node<T>* max = n) {
-    while (max->getRight() != nullptr) {
+template <typename K,typename V>
+Node<K,V>* BinarySearchTree<K,V>::Maximum (Node<K,V>* n)
+{
+  if (Node<K,V>* max = n)
+  {
+    while (max->getRight() != nullptr)
       max = max->getRight();
-    }
+
     return max;
   }
-  else {return nullptr;}
+  else
+    return nullptr;
 }
 
-template <typename T>
-Node<T>* BinarySearchTree<T>::Successor (Node<T>* n) {
-  if (n->getRight()){return Minimum(n->getRight());}
-  else {
-    Node<T> *y = n->getParent();
-    while (y!=nullptr) {
-      if (n == y->getRight()){
-      n = y;
-      y = n->getParent();
-      }
-      else {return y;}
+template <typename K,typename V>
+Node<K,V>* BinarySearchTree<K,V>::Successor (Node<K,V>* n)
+{
+  if (n->getRight()!= nullptr)
+    return Minimum(n->getRight());
+
+  else
+  {
+    Node<K,V> *y = n->getParent();
+    while (y!=nullptr && n == y->getRight())
+    {
+        n = y;
+        y = n->getParent();
     }
     return y;
   }
 }
 
-template <typename T>
-class BinarySearchTree<T>::iterator {
-  friend class BinarySearchTree<T>;
-  friend int main();
-  BinarySearchTree<T>* bst;
+template <typename K,typename V>
+typename BinarySearchTree<K,V>::iterator BinarySearchTree<K,V>::begin () {return BinarySearchTree::iterator(this,this->Minimum(root));}
 
-  Node<T>* current;
+template <typename K,typename V>
+typename BinarySearchTree<K,V>::iterator BinarySearchTree<K,V>::end () {return BinarySearchTree::iterator(this,nullptr);}
 
-  iterator (BinarySearchTree<T>* t, Node<T>* n) : bst(t), current(n) {}
+template <typename K,typename V>
+BinarySearchTree<K,V>::iterator::iterator (BinarySearchTree<K,V>* t, Node<K,V>* n) : bst(t), current(n) {}
 
-public:
+template <typename K,typename V>
+BinarySearchTree<K,V>::iterator::iterator () : bst(nullptr), current(nullptr) {}
 
-  iterator () : bst(nullptr), current(nullptr) {}
+template <typename K,typename V>
+typename BinarySearchTree<K,V>::iterator& BinarySearchTree<K,V>::iterator::operator++()
+{
+  current = bst->Successor(current);
+  return *this;
+}
 
-  iterator& operator++() {
-    current = bst->Successor(current);
-    return *this;
-  }
-  friend bool operator != (const iterator& i1, const iterator& i2) {
-    return i1.current != i2.current;
-  }
-};
-/*
-template <typename T>
-BinarySearchTree::iterator BinarySearchTree<T>::begin() {return BinarySearchTree::iterator(this,this->get_min());}
+template <typename K,typename V>
+bool BinarySearchTree<K,V>::iterator::operator!= (const iterator& other)
+{
+  return this->current != other.current;
+}
 
-template <typename T>
-BinarySearchTree::iterator BinarySearchTree<T>::end() {return BinarySearchTree::iterator(this,this->Maximum(root)->getRightChild());}
-*/
+template <typename K,typename V>
+K  BinarySearchTree<K,V>::iterator::getKey() {return current->getKey();}
 
+template <typename K,typename V>
+V  BinarySearchTree<K,V>::iterator::getValue() {return current->getValue();}
 
 #endif

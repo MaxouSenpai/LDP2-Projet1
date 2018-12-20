@@ -14,17 +14,13 @@ public:
 
   Vecteur (const Vecteur&) = default;
 
-  Vecteur (Vecteur&&) = default;
-
   virtual ~Vecteur () = default;
 
-  virtual T& operator[](std::ptrdiff_t) = 0;
+  virtual std::size_t getSize () const = 0;
 
-  virtual std::size_t getSize() const = 0;
+  virtual T get (std::ptrdiff_t) = 0;
 
-  virtual T& get(std::ptrdiff_t) = 0;
-
-  virtual void set(T,std::ptrdiff_t) = 0;
+  virtual void set (std::ptrdiff_t,T) = 0;
 
 };
 

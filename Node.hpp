@@ -1,116 +1,121 @@
 #ifndef _NODE_H_
 #define _NODE_H_
 
-template <typename T> class Node {
+template <typename K,typename V> class Node {
 
 private:
-  unsigned int key;
-  T data;
-  Node<T> *parent, *left, *right;
+  K key;
+  V value;
+  Node<K,V> *parent, *left, *right;
 
 public:
 
-  Node (unsigned int=0,T=false);
+  Node (K=false,V=false);
 
-  Node (const Node<T>&);
+  Node (const Node<K,V>&);
 
   ~Node ();
 
-  Node<T>& operator= (const Node<T>&);
+  Node<K,V>& operator= (const Node<K,V>&);
 
-  bool operator< (const Node<T>&);
+  bool operator< (const Node<K,V>&);
 
-  unsigned int getKey () const;
+  const K& getKey () const;
 
-  void setKey (unsigned int);
+  void setKey (K);
 
-  const T& getData () const;
+  V& getValue ();
 
-  T& getData ();
+  void setValue (V);
 
-  void setData (T);
+  Node<K,V>* getParent () const;
 
-  Node<T>* getParent() const;
+  void setParent (Node<K,V>*);
 
-  void setParent(Node<T>*);
+  Node<K,V>* getLeft () const;
 
-  Node<T>* getLeft () const;
+  void setLeft (Node<K,V>*);
 
-  void setLeft (Node<T>*);
+  Node<K,V>* getRight () const;
 
-  Node<T>* getRight () const;
-
-  void setRight (Node<T>*);
+  void setRight (Node<K,V>*);
 
 };
 
-template <typename T> Node<T>::Node (unsigned int i, T t) : key(i), data(t), parent(nullptr), left(nullptr), right(nullptr) {}
+template <typename K,typename V> Node<K,V>::Node (K k, V v) : key(k), value(v), parent(nullptr), left(nullptr), right(nullptr) {}
 
-template <typename T> Node<T>::Node (const Node<T>& other) : key(other.getKey()), data(other.getData()), parent(nullptr), left(nullptr), right(nullptr) {
-
-  if (other.getLeft() != nullptr) {
-    setLeft(new Node<T> (*other.getLeft()));
+template <typename K,typename V> Node<K,V>::Node (const Node<K,V>& other) : key(other.key), value(other.value), parent(nullptr), left(nullptr), right(nullptr)
+{
+  if (other.left != nullptr)
+  {
+    Node<K,V> *temp = new Node<K,V> (*other.left);
+    temp->setParent(this);
+    this->left = temp;
   }
 
-  if (other.getRight() != nullptr) {
-    setRight(new Node<T> (*other.getRight()));
-  }
-}
-
-template <typename T> Node<T>::~Node () {
-  if (getLeft() != nullptr) {
-    delete getLeft();
-  }
-
-  if (getRight() != nullptr) {
-    delete getRight();
+  if (other.right != nullptr) {
+    Node<K,V> *temp = new Node<K,V> (*other.right);
+    temp->setParent(this);
+    this->right = temp;
   }
 }
 
-template <typename T> Node<T>& Node<T>::operator= (const Node<T>& other) {
-  setKey(other.getKey());
-  setData(other.getData());
-  if (other.getLeft() != nullptr) {
-    setLeft(new Node<T> (*other.getLeft()));
-  }
+template <typename K,typename V> Node<K,V>::~Node ()
+{
+  if (this->left != nullptr)
+    delete this->left;
 
-  else {
-    setLeft(nullptr);
-  }
+  if (this->right != nullptr)
+    delete this->right;
+}
 
-  if (other.getRight() != nullptr) {
-    setRight(new Node<T> (*other.getRight()));
-  }
+template <typename K,typename V> Node<K,V>& Node<K,V>::operator= (const Node<K,V>& other)
+{
+  this->key = other.key;
+  this->value = other.value;
 
-  else {
-    setRight(nullptr);
-  }
+  if (this->left != nullptr)
+    delete this->left;
+
+  if (other.left != nullptr)
+    this->left = new Node<K,V> (*other.left);
+
+  else
+    this->left = nullptr;
+
+
+  if (this->right != nullptr)
+    delete this->right;
+
+  if (other.right != nullptr)
+    this->right = new Node<K,V> (*other.right);
+
+  else
+    this->right = nullptr;
 
   return *this;
 }
 
-template <typename T> bool Node<T>::operator< (const Node<T>& other) {return getKey() < other.getKey();}
+template <typename K,typename V> bool Node<K,V>::operator< (const Node<K,V>& other) {return this->key < other.key;}
 
-template <typename T> unsigned int Node<T>::getKey () const {return key;}
+template <typename K,typename V> const K& Node<K,V>::getKey () const {return this->key;}
 
-template <typename T> void Node<T>::setKey (unsigned int i) {key = i;}
+template <typename K,typename V> void Node<K,V>::setKey (K i) {this->key = i;}
 
-template <typename T> const T& Node<T>::getData () const {return data;}
+template <typename K,typename V> V& Node<K,V>::getValue () {return this->value;}
 
-template <typename T> T& Node<T>::getData () {return data;}
+template <typename K,typename V> void Node<K,V>::setValue (V v) {this->value = v;}
 
-template <typename T> void Node<T>::setData (T d) {data = d;}
+template <typename K,typename V> Node<K,V>* Node<K,V>::getParent () const {return this->parent;}
 
-template <typename T> Node<T>* Node<T>::getParent() const {return parent;}
+template <typename K,typename V> void Node<K,V>::setParent (Node<K,V>* n) {this->parent = n;}
 
-template <typename T> void Node<T>::setParent(Node<T>* n) {parent = n;}
+template <typename K,typename V> Node<K,V>* Node<K,V>::getLeft () const {return this->left;}
 
-template <typename T> Node<T>* Node<T>::getLeft () const {return left;}
+template <typename K,typename V> void Node<K,V>::setLeft (Node<K,V>* n) {this->left = n;}
 
-template <typename T> void Node<T>::setLeft (Node<T>* n) {left = n;}
+template <typename K,typename V> Node<K,V>* Node<K,V>::getRight () const {return this->right;}
 
-template <typename T> Node<T>* Node<T>::getRight () const {return right;}
-
-template <typename T> void Node<T>::setRight (Node<T>* n) {right = n;}
+template <typename K,typename V> void Node<K,V>::setRight (Node<K,V>* n) {this->right = n;}
 
 #endif
