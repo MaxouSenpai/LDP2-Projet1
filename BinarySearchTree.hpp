@@ -1,3 +1,8 @@
+
+// Nom : Hauwaert
+// Prénom : Maxime
+// Matricule : 461714
+
 #ifndef _BINARYSEARCHTREE_H_
 #define _BINARYSEARCHTREE_H_
 
@@ -20,22 +25,22 @@ public:
 
   BinarySearchTree<K,V>& operator= (const BinarySearchTree<K,V>&);
 
-  virtual Node<K,V>* getRoot () const;
+  Node<K,V>* getRoot () const;
 
-  virtual void setRoot (Node<K,V>*);
+  void setRoot (Node<K,V>*);
 
-  virtual void Insert (Node<K,V>*);
+  void Insert (Node<K,V>*);
 
-  virtual Node<K,V>* Search (K);
+  Node<K,V>* Search (K);
 
-  virtual Node<K,V>* Minimum (Node<K,V>*);
+  Node<K,V>* Minimum (Node<K,V>*);
 
-  virtual Node<K,V>* Maximum (Node<K,V>*);
+  Node<K,V>* Maximum (Node<K,V>*);
 
-  virtual Node<K,V>* Successor(Node<K,V>*);
+  Node<K,V>* Successor (Node<K,V>*);
 
-  class iterator {
-
+  class iterator
+  {
     BinarySearchTree<K,V>* bst;
 
     Node<K,V>* current;
@@ -50,15 +55,13 @@ public:
 
     bool operator != (const BinarySearchTree<K,V>::iterator& other);
 
-    K getKey();
-
-    V getValue();
+    Node<K,V>& operator*();
 
   };
 
-  virtual iterator begin ();
+  iterator begin ();
 
-  virtual iterator end ();
+  iterator end ();
 
 };
 
@@ -101,9 +104,9 @@ Node<K,V>* BinarySearchTree<K,V>::Search (K key)
 {
   Node<K,V> *current = this->root;
   while (current != nullptr) {
-    if (key == current->getKey()) {return current;}
-    else if (key < current->getKey()){current = current->getLeft();}
-    else {current = current->getRight();}
+    if (key == current->getKey()) return current;
+    else if (key < current->getKey()) current = current->getLeft();
+    else current = current->getRight();
   }
   return current;
 }
@@ -207,9 +210,6 @@ bool BinarySearchTree<K,V>::iterator::operator!= (const iterator& other)
 }
 
 template <typename K,typename V>
-K  BinarySearchTree<K,V>::iterator::getKey() {return current->getKey();}
-
-template <typename K,typename V>
-V  BinarySearchTree<K,V>::iterator::getValue() {return current->getValue();}
+Node<K,V>&  BinarySearchTree<K,V>::iterator::operator*() {return *current;}
 
 #endif

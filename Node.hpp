@@ -1,3 +1,8 @@
+
+// Nom : Hauwaert
+// Prénom : Maxime
+// Matricule : 461714
+
 #ifndef _NODE_H_
 #define _NODE_H_
 
@@ -48,15 +53,14 @@ template <typename K,typename V> Node<K,V>::Node (const Node<K,V>& other) : key(
 {
   if (other.left != nullptr)
   {
-    Node<K,V> *temp = new Node<K,V> (*other.left);
-    temp->setParent(this);
-    this->left = temp;
+    this->left = new Node<K,V> (*other.left);
+    this->left->parent = this;
   }
 
-  if (other.right != nullptr) {
-    Node<K,V> *temp = new Node<K,V> (*other.right);
-    temp->setParent(this);
-    this->right = temp;
+  if (other.right != nullptr)
+  {
+    this->right = new Node<K,V> (*other.right);
+    this->right->parent = this;
   }
 }
 
@@ -78,18 +82,21 @@ template <typename K,typename V> Node<K,V>& Node<K,V>::operator= (const Node<K,V
     delete this->left;
 
   if (other.left != nullptr)
+  {
     this->left = new Node<K,V> (*other.left);
-
+    this->left->parent = this;
+  }
   else
     this->left = nullptr;
-
 
   if (this->right != nullptr)
     delete this->right;
 
   if (other.right != nullptr)
+  {
     this->right = new Node<K,V> (*other.right);
-
+    this->right->parent = this;
+  }
   else
     this->right = nullptr;
 

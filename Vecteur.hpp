@@ -1,3 +1,8 @@
+
+// Nom : Hauwaert
+// Prénom : Maxime
+// Matricule : 461714
+
 #ifndef _VECTEUR_H_
 #define _VECTEUR_H_
 
@@ -12,7 +17,7 @@ public:
 
   Vecteur () = default;
 
-  Vecteur (const Vecteur&) = default;
+  Vecteur (const Vecteur<T>&) = default;
 
   virtual ~Vecteur () = default;
 

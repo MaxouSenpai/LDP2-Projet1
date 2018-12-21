@@ -1,3 +1,8 @@
+
+// Nom : Hauwaert
+// Prénom : Maxime
+// Matricule : 461714
+
 #ifndef _VECTEURCREUX_H_
 #define _VECTEURCREUX_H_
 
@@ -20,8 +25,6 @@ public:
 
   VecteurCreux (std::size_t);
 
-  VecteurCreux (V[],std::size_t); // TODO
-
   VecteurCreux (VecteurCreux<V>&);
 
   virtual ~VecteurCreux ();
@@ -40,9 +43,6 @@ template <typename V>
 VecteurCreux<V>::VecteurCreux (std::size_t x) : Vecteur<V> (), BinarySearchTree<unsigned int,V> (), size(x) {}
 
 template <typename V>
-VecteurCreux<V>::VecteurCreux (V a[], std::size_t x) : Vecteur<V> (), BinarySearchTree<unsigned int,V> (), size(x) {}
-
-template <typename V>
 VecteurCreux<V>::VecteurCreux (VecteurCreux<V>& other) : Vecteur<V> (), BinarySearchTree<unsigned int,V> (other), size(other.size) {}
 
 template <typename V>
@@ -51,9 +51,10 @@ VecteurCreux<V>::~VecteurCreux () {}
 template <typename V>
 VecteurCreux<V>& VecteurCreux<V>::operator= (const VecteurCreux<V>& other)
 {
-  return this;
+  this->size = other.size;
+  this->BinarySearchTree<unsigned int,V>::operator= (other);
+  return *this;
 }
-
 
 template <typename V>
 std::size_t VecteurCreux<V>::getSize () const {return this->size;}
@@ -69,7 +70,7 @@ V VecteurCreux<V>::get (std::ptrdiff_t k)
     if (Node <unsigned int,V> *n = this->Search(unsigned(k)))
       return n->getValue();
 
-    else
+    else // Si pas présent en mémoire
       return V(false);
   }
 }
@@ -82,24 +83,19 @@ void VecteurCreux<V>::set (std::ptrdiff_t k, V v)
 
   else
   {
-    if (v!=V(false))
-    {
-        if (this->root == nullptr)
-          this->root = new Node<unsigned int, V> (unsigned(k),v);
+      if (this->root == nullptr)
+        this->root = new Node<unsigned int, V> (unsigned(k),v);
 
-        else
-          this->setSearch(k,v,this->root);
-    }
+      else
+        this->setSearch(k,v,this->root);
   }
 }
 
 template <typename V>
 void VecteurCreux<V>::setSearch (std::ptrdiff_t k, V v, Node<unsigned int, V>* n)
-{
+{ // Comme Insert() mais vérifie si la clé existe déjà
   if (unsigned(k) == n->getKey())
-  {
     n->setValue(v);
-  }
 
   else if (k < n->getKey())
   {
@@ -107,11 +103,12 @@ void VecteurCreux<V>::setSearch (std::ptrdiff_t k, V v, Node<unsigned int, V>* n
       setSearch(k,v,n->getLeft());
 
     else
-    {
-      Node<unsigned int, V> *temp = new Node<unsigned int, V> (unsigned(k),v);
-      temp->setParent(n);
-      n->setLeft(temp);
-    }
+      if (v!=V(false)) // Si la valeur n'est pas nulle
+      {
+        Node<unsigned int, V> *temp = new Node<unsigned int, V> (unsigned(k),v);
+        temp->setParent(n);
+        n->setLeft(temp);
+      }
   }
 
   else
@@ -120,11 +117,12 @@ void VecteurCreux<V>::setSearch (std::ptrdiff_t k, V v, Node<unsigned int, V>* n
       setSearch(k,v,n->getRight());
 
     else
-    {
-      Node<unsigned int, V> *temp = new Node<unsigned int, V> (unsigned(k),v);
-      temp->setParent(n);
-      n->setRight(temp);
-    }
+      if (v!=V(false)) // Si la valeur n'est pas nulle
+      {
+        Node<unsigned int, V> *temp = new Node<unsigned int, V> (unsigned(k),v);
+        temp->setParent(n);
+        n->setRight(temp);
+      }
   }
 }
 
