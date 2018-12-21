@@ -2,7 +2,7 @@ FLAGS= -std=c++17 -masm=intel -fconcepts -mlong-double-128 -ggdb3 -Wpedantic -Wa
 
 CXX= g++-8
 MAIN= main.cpp
-OUT= Test.out
+OUT= main
 
 all: $(OUT)
 
